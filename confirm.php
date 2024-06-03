@@ -10,32 +10,33 @@ if(isset($_POST['submit'])){
   $tgl1 = new DateTime($_POST['cekin']);
   $tgl2 = new DateTime($_POST['cekout']);
   $selisih = $tgl1->diff($tgl2);
-  $menginap = $selisih->days + 1;
+  $menginap = $selisih->days;
   };
 
   # hitung total harga
   $total = $harga * $_POST['jumlah'] * $menginap;
   
-}else(header("Location: reservation.php"));
+}else if(!isset($_POST['confirm']))(header("Location: reservation.php"));
 if(isset($_POST['confirm'])){
-    # ambil harga kamar
-    $sqlj = "SELECT harga FROM jenis_kamar WHERE kamar_id = {$_POST['jenis']}";
-    $queryj = $connect->query($sqlj);
-    foreach($queryj as $j){
-    $harga = $j["harga"];
-    $tgl1 = new DateTime($_POST['cekin']);
-    $tgl2 = new DateTime($_POST['cekout']);
-    $selisih = $tgl1->diff($tgl2);
-    };
+  # ambil harga kamar
+  $sqlj = "SELECT harga FROM jenis_kamar WHERE kamar_id = {$_POST['jenis']}";
+  $queryj = $connect->query($sqlj);
+  foreach($queryj as $j){
+  $harga = $j["harga"];
+  $tgl1 = new DateTime($_POST['cekin']);
+  $tgl2 = new DateTime($_POST['cekout']);
+  $selisih = $tgl1->diff($tgl2);
+  };
 
   $nama = htmlspecialchars($_POST['nama'] );
   $catatan = htmlspecialchars($_POST['catatan']);
-  #sql
+  # total harga (harga x jumlah kamar x hari menginap)
   $total = $harga * $_POST['jumlah'] * $selisih->days;
-  // print_r($total);
+  
+  
   $sql = "INSERT INTO reservasi_kamar (kamar_id, nama, cekin, cekout, no_identitas, no_hp, jumlah_kamar, total, catatan) VALUES ('{$_POST['jenis']}', '{$nama}', '{$_POST['cekin']}', '{$_POST['cekout']}', '{$_POST['identitas']}', '{$_POST['no_hp']}', '{$_POST['jumlah']}', '{$total}', '{$catatan}')";
   $query = $connect->query($sql);
-  $sqlpop1 = "SELECT kamar_id, count(*) FROM reservasi_kamar  WHERE kamar_id = '{$_POST['jenis']} GROUP BY kamar_id '";$querypop1 = $connect->query($sqlpop1);foreach($querypop1 as $q){$popularitas = $q['count(*)'];}
+  $sqlpop1 = "SELECT count(*) FROM reservasi_kamar  WHERE kamar_id = '{$_POST['jenis']}'";$querypop1 = $connect->query($sqlpop1);foreach($querypop1 as $q){$popularitas = $q['count(*)'];}
   $sqlpop2 = "UPDATE jenis_kamar SET popularitas = $popularitas WHERE kamar_id = '{$_POST['jenis']}'"; $querypop2 = $connect->query($sqlpop2);
   echo "
   <script>
