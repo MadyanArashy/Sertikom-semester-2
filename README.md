@@ -18,7 +18,7 @@ Penugasan untuk Sertifikat Kompetensi Kelas X Semester 2. Website reservasi kama
 
 ## Screenshot
 
-![Homepage Hero](https://ibb.co.com/R4ZdmQN)
+![Homepage Hero](https://i.ibb.co.com/Hp13sGC/image.png)
 ![Homepage Introduction](https://ibb.co.com/3Sf1sqb)
 ![Bestselling Rooms](https://ibb.co.com/DRCdXB1)
 ![Room 1](https://ibb.co.com/WcP8z28)
