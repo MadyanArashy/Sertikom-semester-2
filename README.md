@@ -19,10 +19,10 @@ Penugasan untuk Sertifikat Kompetensi Kelas X Semester 2. Website reservasi kama
 ## Screenshot
 
 ![Homepage Hero](https://i.ibb.co.com/Hp13sGC/image.png)
-![Homepage Introduction](https://ibb.co.com/3Sf1sqb)
-![Bestselling Rooms](https://ibb.co.com/DRCdXB1)
-![Room 1](https://ibb.co.com/WcP8z28)
-![Reservation](https://ibb.co.com/2MZLrb0)
+![Homepage Introduction](https://i.ibb.co.com/dkbBcqv/image.png)
+![Bestselling Rooms](https://i.ibb.co.com/qrs6GHD/image.png)
+![Room 1](https://i.ibb.co.com/nDnd1Ld/image.png)
+![Reservation](https://i.ibb.co.com/kDmrTdV/image.png)
 ## Deployment
 Untuk menjalankan proyek ini
 
