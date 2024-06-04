@@ -6,7 +6,9 @@ if(isset($_POST['submit'])) {
     $sql = "SELECT * FROM admins WHERE username = '{$_POST['username']}' AND password = '{$_POST['password']}' AND db_password = '{$_POST['db_password']}' ";
     $query = $connect->query($sql);
     if($query->num_rows>0){
-        $_SESSION['account'] = true;
+        foreach($query as $q){
+        $_SESSION['account'] = $q['username'];
+        };
         header("Location: index.php");
     };
 }

@@ -1,13 +1,46 @@
-<?php include("connect.php");session_start();if($_SESSION['account'] != true){header("Location: login.php");};if(isset($_POST['logout'])){session_destroy(); header("Location: login.php");};$sql = "SELECT * FROM reservasi_kamar INNER JOIN jenis_kamar ON reservasi_kamar.kamar_id = jenis_kamar.kamar_id"; $query = $connect->query($sql);
+<?php date_default_timezone_set('Asia/Jakarta');include("connect.php");session_start();if($_SESSION['account'] != true){header("Location: login.php");};if(isset($_POST['logout'])){session_destroy(); header("Location: login.php");};$sql = "SELECT * FROM reservasi_kamar INNER JOIN jenis_kamar ON reservasi_kamar.kamar_id = jenis_kamar.kamar_id ORDER BY cekin"; $query = $connect->query($sql);
+$sqljk = "SELECT * FROM jenis_kamar";$queryjk = $connect->query($sqljk);
 if(isset($_POST['submit'])){
-    $total = $harga * $_POST['jumlah'];
-    $sql = "INSERT INTO reservasi_kamar (kamar_id, nama, cekin, cekout, no_identitas, no_hp, jumlah_kamar, total, catatan) VALUES ('{$_POST['jenis']}', '{$_POST['nama']}', '{$_POST['cekin']}', '{$_POST['cekout']}', '{$_POST['identitas']}', '{$_POST['no_hp']}', '{$_POST['jumlah']}', '$total', '{$_POST['catatan']}')";
-    $query2 = $connect->query($sql2);
-    if($query2){
-        header("Location: admin.php");
-    };
+  $sqlad = "SELECT username, fullname FROM admins WHERE username = '{$_SESSION['account']}'";$queryad = $connect->query($sqlad);foreach($queryad as $qad){$ad_user=$qad['username'];$ad_full=$qad['fullname'];};
+    $jd = $_POST['nama'];
+    $waktu = date("Y-m-d H:i:s");
+
+    $perubahan = ('<span class="text-success">Menambahkan</span> data [Reservasi Kamar] "'.$jd.'"');
+    $sql2 = "INSERT INTO aktivitas (admin_username, admin_fullname, perubahan, waktu) VALUES ('{$ad_user}', '{$ad_full}', '{$perubahan}', '{$waktu}')";
+    $connect->query($sql2);
+
+   # ambil harga kamar
+   $sqlj = "SELECT harga FROM jenis_kamar WHERE kamar_id = {$_POST['jenis']}";
+   $queryj = $connect->query($sqlj);
+   foreach($queryj as $j){
+   $harga = $j["harga"];
+   $tgl1 = new DateTime($_POST['cekin']);
+   $tgl2 = new DateTime($_POST['cekout']);
+   $selisih = $tgl1->diff($tgl2);
+   };
+ 
+   $nama = htmlspecialchars($_POST['nama'] );
+   $catatan = htmlspecialchars($_POST['catatan']);
+   # total harga (harga x jumlah kamar x hari menginap)
+   $total = $harga * $_POST['jumlah'] * $selisih->days;
+   
+   
+   $sqls = "INSERT INTO reservasi_kamar (kamar_id, nama, cekin, cekout, no_identitas, no_hp, jumlah_kamar, total, catatan) VALUES ('{$_POST['jenis']}', '{$nama}', '{$_POST['cekin']}', '{$_POST['cekout']}', '{$_POST['identitas']}', '{$_POST['no_hp']}', '{$_POST['jumlah']}', '{$total}', '{$catatan}')";
+   $connect->query($sqls);
+   $sqlpop1 = "SELECT count(*) FROM reservasi_kamar  WHERE kamar_id = '{$_POST['jenis']}'";$querypop1 = $connect->query($sqlpop1);foreach($querypop1 as $q){$popularitas = $q['count(*)'];}
+   $sqlpop2 = "UPDATE jenis_kamar SET popularitas = $popularitas WHERE kamar_id = '{$_POST['jenis']}'"; $querypop2 = $connect->query($sqlpop2);
+
+   echo "<script>action('reservasi telah dibuat');window.location.href('./')</script>";
 };
 if(isset($_POST['del'])){
+  $sqlad = "SELECT username, fullname FROM admins WHERE username = '{$_SESSION['account']}'";$queryad = $connect->query($sqlad);foreach($queryad as $qad){$ad_user=$qad['username'];$ad_full=$qad['fullname'];};
+  $sqljd = "SELECT nama FROM reservasi_kamar WHERE reservasi_id = '{$_POST['del']}'";$queryjd = $connect->query($sqljd);foreach($queryjd as $qjd){$jd=$qjd['nama'];};
+  $waktu = date("Y-m-d H:i:s");
+
+  $perubahan = ('<span class="text-danger">Menghapus</span> data [Reservasi Kamar] "'.$jd.'"');
+  $sql2 = "INSERT INTO aktivitas (admin_username, admin_fullname, perubahan, waktu) VALUES ('{$ad_user}', '{$ad_full}', '{$perubahan}', '{$waktu}')";
+  $connect->query($sql2);
+
   $sql2 = "DELETE FROM reservasi_kamar WHERE reservasi_id='{$_POST['del']}'";
   $query3 = $connect->query($sql2);
   if($query3){
@@ -31,26 +64,7 @@ if(isset($_POST['del'])){
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="./">Ekspro Dashboard</a>
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <!-- Float Right-->
-            <div class="d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
-            </div>
-            <!-- Navbar-->
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><form action="" method="POST"><input type="submit" name="logout" class="dropdown-item" value="Logout"></form></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
+        <?php include("navbar.php") ?>
         <?php include("sidenav.php") ?>
             <div id="layoutSidenav_content">
                 <main>
@@ -91,8 +105,56 @@ if(isset($_POST['del'])){
                                             <td><?= $row['no_hp']?></td>
                                             <td><?= $row['jenis_kamar']?></td>
                                             <td><?= $row['jumlah_kamar']?></td>
-                                            <td><?= $row['cekin']?></td>
-                                            <td><?= $row['cekout']?></td>
+                                            <td style="white-space: nowrap;">
+                                              <?php
+                                              $cekin = new DateTime($row['cekin']);
+
+                                              $hari_cekin = $cekin->format('d'); 
+                                              $bulan_cekin = $cekin->format('m'); 
+                                              $tahun_cekin = $cekin->format('Y');
+
+                                              switch($bulan_cekin){
+                                                case'01':$bulan_cekin="Januari";break;
+                                                case'02':$bulan_cekin="Februari";break;
+                                                case'03':$bulan_cekin="Maret";break;
+                                                case'04':$bulan_cekin="April";break;
+                                                case'05':$bulan_cekin="Mei";break;
+                                                case'06':$bulan_cekin="Juni";break;
+                                                case'07':$bulan_cekin="Juli";break;
+                                                case'08':$bulan_cekin="Agustus";break;
+                                                case'09':$bulan_cekin="September";break;
+                                                case'10':$bulan_cekin="Oktober";break;
+                                                case'11':$bulan_cekin="November";break;
+                                                case'12':$bulan_cekin="Desember";break;};
+
+                                                echo ("{$row['cekout']} <br> ({$hari_cekin} {$bulan_cekin} {$tahun_cekin})");
+                                              ?>
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                              <?php 
+                                              $cekout = new DateTime($row['cekout']);
+
+                                              $hari_cekout = $cekout->format('d'); 
+                                              $bulan_cekout = $cekout->format('m'); 
+                                              $tahun_cekout = $cekout->format('Y');
+
+                                              switch($bulan_cekout){
+                                                case'01':$bulan_cekout="Januari";break;
+                                                case'02':$bulan_cekout="Februari";break;
+                                                case'03':$bulan_cekout="Maret";break;
+                                                case'04':$bulan_cekout="April";break;
+                                                case'05':$bulan_cekout="Mei";break;
+                                                case'06':$bulan_cekout="Juni";break;
+                                                case'07':$bulan_cekout="Juli";break;
+                                                case'08':$bulan_cekout="Agustus";break;
+                                                case'09':$bulan_cekout="September";break;
+                                                case'10':$bulan_cekout="Oktober";break;
+                                                case'11':$bulan_cekout="November";break;
+                                                case'12':$bulan_cekout="Desember";break;};
+
+                                                echo ("{$row['cekout']} <br> ({$hari_cekout} {$bulan_cekout} {$tahun_cekout})");
+                                              ?>
+                                            </td>
                                             <td><?= $row['catatan']?></td>
                                             <td><?= $row['total']?></td>
                                     
@@ -131,73 +193,73 @@ if(isset($_POST['del'])){
                     <div class="modal-dialog">
                         <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Reservasi Hotel</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <!-- Form -->
-                            <form action="#" method="post" class="bg-white p-md-5 p-4 mb-5 border">
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <label class="text-black font-weight-bold" for="name">Nama lengkap</label>
-                  <input type="text" id="nama" class="form-control" name="nama">
-                </div>
-                <div class="col-md-6 form-group">
-                  <label class="text-black font-weight-bold" for="identitas">No Identitas</label>
-                  <input type="text" id="identitas" class="form-control" maxlength="13" name="identitas" minlength="13" maxlength="13">
-                </div>
-              </div>
-          
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <label class="text-black font-weight-bold" for="no_hp">No Handphone</label>
-                  <input type="tel" id="no_hp" class="form-control" name="no_hp" maxlength="16">
-                </div>
-                <div class="col-md-6 form-group">
-                  <label for="jumlah" class="text-black font-weight-bold">Jumlah Kamar</label>
-                  <input type="number" name="jumlah" id="jumlah" class="form-control">
-                  
-                </div>
-              </div>
+                            <form action="" method="post" class="bg-white p-md-5 p-4 mb-5 border">
+                              <div class="row">
+                                <div class="col-md-6 form-group">
+                                  <label class="text-black font-weight-bold" for="name">Nama lengkap</label>
+                                  <input type="text" id="nama" class="form-control" name="nama" required >
+                                </div>
+                                <div class="col-md-6 form-group">
+                                  <label class="text-black font-weight-bold" for="identitas">No Identitas</label>
+                                  <input type="text" id="identitas" class="form-control" maxlength="13" name="identitas" minlength="13" maxlength="13" required >
+                                </div>
+                              </div>
+                          
+                              <div class="row">
+                                <div class="col-md-6 form-group">
+                                  <label class="text-black font-weight-bold" for="no_hp">No Handphone</label>
+                                  <input type="tel" id="no_hp" class="form-control" name="no_hp" maxlength="16" required >
+                                </div>
+                                <div class="col-md-6 form-group">
+                                  <label for="jumlah" class="text-black font-weight-bold">Jumlah Kamar</label>
+                                  <input type="number" name="jumlah" id="jumlah" class="form-control" min="1" required >
+                                  
+                                </div>
+                              </div>
 
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <label class="text-black font-weight-bold" for="cekin">Check In</label>
-                  <input type="date" id="cekin" class="form-control" name="cekin">
-                </div>
-                <div class="col-md-6 form-group">
-                  <label class="text-black font-weight-bold" for="cekout">Check Out</label>
-                  <input type="date" id="cekout" class="form-control" name="cekout">
-                </div>
-              </div>
+                              <div class="row">
+                                <div class="col-md-6 form-group">
+                                  <label class="text-black font-weight-bold" for="cekin">Check In</label>
+                                  <input type="date" id="cekin" class="form-control" name="cekin" placeholder="dd/mm/yy" required >
+                                </div>
+                                <div class="col-md-6 form-group">
+                                  <label class="text-black font-weight-bold" for="cekout">Check Out</label>
+                                  <input type="date" id="cekout" class="form-control" name="cekout" required >
+                                </div>
+                              </div>
 
-              <div class="row">
-                <div class="col-md-12 form-group">
-                  <label for="jenis" class="font-weight-bold text-black">Jenis Kamar</label>
-                  <div class="field-icon-wrap">
-                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                    <select name="jenis" id="jenis" class="form-control">
-                    <option selected disabled value="">-- Pilih salah satu --</option>
-                      <?php foreach($queryk as $row){ ?>
-                      <option class="text-black" value="<?=$row['kamar_id'];?>"><?=$row['jenis_kamar'];};?></option>
-                    </select>
-                  </div>
-                </div>
-              </div>
+                              <div class="row">
+                                <div class="col-md-12 form-group">
+                                  <label for="jenis" class="font-weight-bold text-black">Jenis Kamar</label>
+                                  <div class="field-icon-wrap">
+                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                                    <select name="jenis" id="jenis" class="form-control" required>
+                                      <option disabled <?="selected"?> value="">-- Pilih salah satu --</option>
+                                      <?php foreach($queryjk as $row) {$harga2 = number_format($row['harga']);?>
+                                      <option class="text-black" value="<?=$row['kamar_id'];?>"><?="{$row['jenis_kamar']} ({$harga2})";?></option>
+                                      <?php };?>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
 
-              <div class="row mb-4">
-                <div class="col-md-12 form-group">
-                  <label class="text-black font-weight-bold" for="catatan">Catatan</label>
-                  <textarea name="catatan" id="catatan" class="form-control " cols="30" rows="8"></textarea>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 form-group">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" name="submit" class="btn btn-success text-white font-weight-bold">Masukkan</button>
-                </div>
-              </div>
-            </form>
+                              <div class="row mb-4">
+                                <div class="col-md-12 form-group">
+                                  <label class="text-black font-weight-bold" for="catatan">Catatan</label>
+                                  <textarea name="catatan" id="catatan" class="form-control " cols="30" rows="8"></textarea>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-6 form-group">
+                                  <button type="submit" name="submit" class="btn btn-info text-white font-weight-bold">Masukkan</button>
+                                </div>
+                              </div>
+                            </form>
                         </div>
                     </div>
                     </div>

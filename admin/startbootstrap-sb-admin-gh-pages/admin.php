@@ -1,9 +1,16 @@
-<?php include("connect.php"); session_start(); if($_SESSION['account'] != true){header("Location: login.php");};if(isset($_POST['logout'])){session_destroy(); header("Location: login.php");} 
+<?php date_default_timezone_set('Asia/Jakarta'); include("connect.php"); session_start(); if($_SESSION['account'] != true){header("Location: login.php");};if(isset($_POST['logout'])){session_destroy(); header("Location: login.php");} 
 
 $sql = "SELECT * FROM admins";
 $query = $connect->query($sql);
 
 if(isset($_POST['submit'])){
+    $sqlad = "SELECT username, fullname FROM admins WHERE username = '{$_SESSION['account']}'";$queryad = $connect->query($sqlad);foreach($queryad as $qad){$ad_user=$qad['username'];$ad_full=$qad['fullname'];};
+    $jd = $_POST['username'];
+    $waktu = date("Y-m-d H:i:s");
+
+    $perubahan = ('<span class="text-success">Menambahkan</span> data [Admin] "'.$jd.'"');
+    $sql2 = "INSERT INTO aktivitas (admin_username, admin_fullname, perubahan, waktu) VALUES ('{$ad_user}', '{$ad_full}', '{$perubahan}', '{$waktu}')";
+    $connect->query($sql2);
     $sql2 = "INSERT INTO admins (username, fullname, password, db_password) VALUES ('{$_POST['username']}', '{$_POST['fullname']}', '{$_POST['password']}', 'DyCsIlAe')";
     $query2 = $connect->query($sql2);
     if($query2){
@@ -12,6 +19,14 @@ if(isset($_POST['submit'])){
 };
 
 if(isset($_POST['del'])){
+    $sqlad = "SELECT username, fullname FROM admins WHERE username = '{$_SESSION['account']}'";$queryad = $connect->query($sqlad);foreach($queryad as $qad){$ad_user=$qad['username'];$ad_full=$qad['fullname'];};
+    $sqljd = "SELECT username FROM admins WHERE admin_id = '{$_POST['del']}'";$queryjd = $connect->query($sqljd);foreach($queryjd as $qjd){$jd=$qjd['username'];};
+    $waktu = date("Y-m-d H:i:s");
+
+    $perubahan = ('<span class="text-danger">Menghapus</span> data [Admin] "'.$jd.'"');
+    $sql2 = "INSERT INTO aktivitas (admin_username, admin_fullname, perubahan, waktu) VALUES ('{$ad_user}', '{$ad_full}', '{$perubahan}', '{$waktu}')";
+    $connect->query($sql2);
+
     $sql2 = "DELETE FROM admins WHERE admin_id='{$_POST['del']}'";
     $query3 = $connect->query($sql2);
     if($query3){
@@ -19,6 +34,14 @@ if(isset($_POST['del'])){
     }
 };
 if(isset($_POST['edit'])){
+    $sqlad = "SELECT username, fullname FROM admins WHERE username = '{$_SESSION['account']}'";$queryad = $connect->query($sqlad);foreach($queryad as $qad){$ad_user=$qad['username'];$ad_full=$qad['fullname'];};
+    $sqljd = "SELECT username FROM admins WHERE admin_id = '{$_POST['edit']}'";$queryjd = $connect->query($sqljd);foreach($queryjd as $qjd){$jd=$qjd['username'];};
+    $waktu = date("Y-m-d H:i:s");
+
+    $perubahan = ('<span class="text-info">Mengubah</span> data [Admin] "'.$jd.'"');
+    $sql2 = "INSERT INTO aktivitas (admin_username, admin_fullname, perubahan, waktu) VALUES ('{$ad_user}', '{$ad_full}', '{$perubahan}', '{$waktu}')";
+    $connect->query($sql2);
+
     $sql2 = "UPDATE admins SET username = '{$_POST['username']}', fullname = '{$_POST['fullname']}', password = '{$_POST['password']}' WHERE admin_id='{$_POST['edit']}'";
     $query3 = $connect->query($sql2);
     if($query3){
@@ -41,26 +64,7 @@ if(isset($_POST['edit'])){
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.php">Ekspro Dashboard</a>
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <!-- Float Right-->
-            <div class="d-none d-md-inline-block ms-auto me-0 me-md-3 my-2 my-md-0">
-                </div>
-                <!-- Navbar-->
-                <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                            <li><hr class="dropdown-divider" /></li>
-                            <li><form action="" method="POST"><input type="submit" name="logout" class="dropdown-item" value="Logout"></form></li>
-                        </ul>
-                    </li>
-                </ul>
-            </nav>
+            <?php include("navbar.php") ?>
             <?php include("sidenav.php") ?>
             <div id="layoutSidenav_content">
                 <main>

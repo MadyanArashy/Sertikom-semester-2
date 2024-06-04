@@ -21,6 +21,10 @@
                                 <div class="sb-nav-link-icon"><i class="fa-brands fa-black-tie"></i></div>
                                 Admin
                             </a>
+                            <a class="nav-link <?php if($script == "aktivitas"){echo 'active';}; ?>" href="aktivitas.php">
+                                <div class="sb-nav-link-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                                Aktivitas
+                            </a>
                             <div class="sb-sidenav-menu-heading">Interface</div>
                             <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
                                 <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
