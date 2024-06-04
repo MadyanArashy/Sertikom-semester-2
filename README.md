@@ -26,6 +26,7 @@ Penugasan untuk Sertifikat Kompetensi Kelas X Semester 2. Website reservasi kama
 ## Deployment
 Untuk menjalankan proyek ini
 
+Download Zip File: https://drive.google.com/drive/folders/1-XKUfFaPD4iL6ZS7zH-chN3SqPF_fBu1?usp=sharing
 Buka aplikasi server lokal  
 (XAMPP, Laragon, WAMP, dsb.)
 
@@ -44,5 +45,3 @@ Buka
 127.0.0.1/expro-hotel/admin
 ```
 untuk halaman admin, login gunakan akun admin yang telah terdaftar di database db_expro-hotel tabel admins.
-
-Selesai.
