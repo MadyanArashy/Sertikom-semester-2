@@ -31,7 +31,7 @@ if(isset($_POST['submit'])){
    $sqlpop2 = "UPDATE jenis_kamar SET popularitas = $popularitas WHERE kamar_id = '{$_POST['jenis']}'"; $querypop2 = $connect->query($sqlpop2);
 
    echo "<script>action('reservasi telah dibuat');window.location.href('./')</script>";
-   return header("Location: index.php");
+   return header("Location: ./");
 };
 if(isset($_POST['del'])){
   $sqlad = "SELECT username, fullname FROM admins WHERE username = '{$_SESSION['account']}'";$queryad = $connect->query($sqlad);foreach($queryad as $qad){$ad_user=$qad['username'];$ad_full=$qad['fullname'];};
