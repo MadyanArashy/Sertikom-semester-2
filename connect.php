@@ -2,7 +2,7 @@
 $hostname = "localhost"; //SQL Server database (DBMS)
 $username = "root"; //Root server name to access database
 $password = ""; //Database password (none by default)
-$database_name = "db_expro-hotel"; //choose database to access
+$database_name = "db_expro_hotel"; //choose database to access
 
 $connect = mysqli_connect($hostname, $username, $password, $database_name); // variable to access database
 

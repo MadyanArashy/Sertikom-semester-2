@@ -5,10 +5,10 @@ if(isset($_SESSION['revisi']) && $_SESSION['revisi'] === true){$rev = 1;}else{$r
 
 ?>
 
-    <section class="site-hero inner-page overlay" style="background-image: url(images/hero_4.jpg)" data-stellar-background-ratio="0.5">
+    <section class="site-hero inner-page overlay" style="background-image: url(images/hero_4.jpg)">
       <div class="container">
         <div class="row site-hero-inner justify-content-center align-items-center">
-          <div class="col-md-10 text-center" data-aos="fade">
+          <div class="col-md-10 text-center">
             <h1 class="heading mb-3">Reservasi</h1>
             <ul class="custom-breadcrumbs mb-4">
               <li><a href="./">Home</a></li>
@@ -30,7 +30,7 @@ if(isset($_SESSION['revisi']) && $_SESSION['revisi'] === true){$rev = 1;}else{$r
     <section class="section contact-section" id="next">
       <div class="container">
         <div class="row">
-          <div class="col-md-7" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-md-7">
             
             <form action="confirm.php" method="post" class="bg-white p-md-5 p-4 mb-5 border">
               <div class="row">
@@ -96,7 +96,7 @@ if(isset($_SESSION['revisi']) && $_SESSION['revisi'] === true){$rev = 1;}else{$r
               </div>
             </form>
           </div>
-          <div class="col-md-5" data-aos="fade-up" data-aos-delay="200">
+          <div class="col-md-5">
             <div class="row">
               <div class="col-md-10 ml-auto contact-info">
                 <p><span class="d-block">Address:</span> <span class="text-black"> Jl Poras No 7, Sindang Barang Loji</span></p>

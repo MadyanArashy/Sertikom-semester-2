@@ -63,7 +63,7 @@ if(isset($_POST['rev-edit'])){
       <div class="container">
         <h1 class="heading-1 text-center font-weight-bold">Konfirmasi</h1>
         <div class="row">
-          <div class="col-md-7 mx-auto" data-aos="fade-up" data-aos-delay="100">
+          <div class="col-md-7 mx-auto">
             
             <form action="" method="POST" class="bg-white p-md-5 p-4 mb-5 border">
               <div class="row">
